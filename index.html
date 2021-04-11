@@ -44,17 +44,53 @@
         <!-- Content -->
         <div id="content">
           <div class="row">
-            <form onsubmit="return false;"> 
+            <form onsubmit="return false;">
               <button id="addKick" class="button">Add Kick</button>
             </form>
-            <form onsubmit="return false;"> 
+            <form onsubmit="return false;">
               <button id="undo" class="button">Undo</button>
             </form>
           </div>
-          <div class="row 50%">
+          <header id="daily">
+            <hr>
+            <h1>Daily Kicks</h1><br>
+          </header>
+          <div class="row">
             <article class="post">
-              <div id="graphdiv3"></div>
+              <div id="graphdiv1" class="graphy"></div>
             </article>
+          </div>
+          <header id="pattern">
+            <hr>
+            <h1>Daily Pattern</h1><br>
+          </header>
+          <div class="row">
+            <article class="post">
+              <div id="graphdiv2" class="graphy"></div>
+              <b>Zoom:</b>
+              <a href="javascript:zoom(86400);" id="day">day</a>
+              <a href="javascript:zoom(604800);" id="week">week</a>
+              <a href="javascript:zoom(30 * 86400);" id="month">month</a>
+              <a href="javascript:reset();" id="full">full</a>
+              <b>Pan:</b>
+              <a href="javascript:pan(-1);" id="left">left</a>
+              <a href="javascript:pan(+1);" id="right">right</a>
+            </article>
+          </div>
+          <header id="Live">
+            <hr>
+            <h1>Average Pattern</h1><br>
+          </header>
+          <div class="row">
+            <article class="post">
+              <div id="graphdiv3" class="graphy"></div>
+            </article>
+          </div>
+          <div class="row">
+            <form>
+              <label for="Backup">Copy or paste kick data here</label>
+              <textarea class="texty" wrap="soft" id="Backup" onkeyup='saveValue(this); kicker(``,true);' />
+            </form>
           </div>
         </div>
       </div>

@@ -189,141 +189,18 @@ function clippy(x, y) {
   }
 }
 
-//Save the value function - save it to localStorage as (ID, VALUE)
-function saveValue(e) {
-  var id = e.id;  // get the sender's id to save it .
-  var val = e.value; // get the value.
-  localStorage.setItem(id, val);// Every time user writing something, the localStorage's value will override .
-  saveParameter();
-}
-
-function saveParameter() {
-  let url = '';
-  let params = {};
-  document.querySelectorAll('input').forEach((el) => {
-    if (el.value.length > 0) params[el.id] = el.value;
-    if (el.type === `checkbox` || el.type === `radio`) params[el.id] = el.checked;
-  });
-  let esc = encodeURIComponent;
-  let query = Object.keys(params)
-    .map(k => `${esc(k)}=${esc(params[k])}`)
-    .join('&');
-  url += `?${query}`;
-  let newurl = `${window.location.protocol}//${window.location.host + window.location.pathname + url}`;
-  window.history.pushState({ path: newurl }, '', newurl);
-}
-
-//Save the value function - save it to localStorage as (ID, VALUE)
-function saveRadio(e) {
-  e.checkbox = true;
-  document.querySelectorAll('input[type="radio"]').forEach(rad => localStorage.setItem(rad.id, rad.checked));
-  document.querySelectorAll('input[type="checkbox"]').forEach(rad => localStorage.setItem(rad.id, rad.checked));
-  saveParameter();
-}
-function saveCheckbox(e) {
-  e.checkbox = true;
-  document.querySelectorAll('input[type="checkbox"]').forEach(rad => localStorage.setItem(rad.id, rad.checked));
-  saveParameter();
-}
-
-function funkyRadio() {
-  document.querySelectorAll('input[type="radio"]').forEach(rad => {
-    rad.checked = (getSavedValue(rad.id) == "true");
-    rad.addEventListener('change', saveRadio);
-  });
-}
-
 //get the saved value function - return the value of "v" from localStorage.
-function getSavedValue(v) {
+function getSavedValue  (v){
   if (!localStorage.getItem(v)) {
     return "";// You can change this to your defualt value.
   }
   return localStorage.getItem(v);
 }
 
-function change(el) {
-  g3.setVisibility(el.id, el.checked);
-}
-
-function exportToCsv(filename, rows) {
-  var processRow = function (row) {
-    var finalVal = '';
-    for (var j = 0; j < row.length; j++) {
-      var innerValue = row[j] === null ? '' : row[j].toString();
-      if (row[j] instanceof Date) {
-        innerValue = row[j].toLocaleString();
-      }
-      var result = innerValue.replace(/"/g, '""');
-      if (result.search(/("|,|\n)/g) >= 0)
-        result = '"' + result + '"';
-      if (j > 0)
-        finalVal += ',';
-      finalVal += result;
-    }
-    return finalVal + '\n';
-  };
-  var csvFile = '';
-  for (var i = 0; i < rows.length; i++) {
-    csvFile += processRow(rows[i]);
-  }
-  var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
-  if (navigator.msSaveBlob) { // IE 10+
-    navigator.msSaveBlob(blob, filename);
-  } else {
-    var link = document.createElement("a");
-    if (link.download !== undefined) { // feature detection
-      // Browsers that support HTML5 download attribute
-      var url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", filename);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  }
-}
-
-const post = function (url, data, sucPost) {
-  return fetch(url, { method: "POST", body: JSON.stringify(data) })
-    .then(response => response.text())
-    .then(sucPost)
-    .catch((error) => {
-      console.log('Error:', data);
-    });
-}
-
-//fade in and fadeout
-function _(el) {
-  if (!(this instanceof _)) {
-    return new _(el);
-  }
-  this.el = document.querySelector(el);
-}
-
-_.prototype.fade = function fade(type, ms) {
-  var isIn = type === 'in',
-    opacity = isIn ? 0 : 1,
-    interval = 50,
-    duration = ms,
-    gap = interval / duration,
-    self = this;
-
-  if (isIn) {
-    self.el.style.display = 'inline';
-    self.el.style.opacity = opacity;
-  }
-
-  function func() {
-    opacity = isIn ? opacity + gap : opacity - gap;
-    self.el.style.opacity = opacity;
-
-    if (opacity <= 0) self.el.style.display = 'none'
-    if (opacity <= 0 || opacity >= 1) window.clearInterval(fading);
-  }
-  var fading = window.setInterval(func, interval);
+function saveCheckbox(e){
+  e.checkbox = true;
+  document.querySelectorAll('input[type="checkbox"]').forEach(rad => localStorage.setItem(rad.id,rad.checked));
 }
 
 const smoothdec = (a, b = 2) => +(parseFloat(a).toFixed(b)); //fix broken decimals
-
 document.documentElement.setAttribute('lang', navigator.language); //add language to html
