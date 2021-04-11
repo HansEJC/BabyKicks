@@ -6,13 +6,15 @@ function startup() {
 
 function kicker(func, port) {
   let date = new Date();
+  let day = smoothDate(date);
   let kicks = port
     ? porter()
-    : getKicks() || [date.getFullYear(), date.getMonth(), date.getDate(), 0];
+    : getKicks() || [[day, 0]];
   try {
     if (func === `add`) kicks.push([date, 1]);
     else if (func === `undo`) kicks.pop();
   } catch (e) { console.log(e); }
+  document.querySelector(`#Backup`).value = JSON.stringify(kicks);
   localStorage.setItem(`kicks`, JSON.stringify(kicks));
   daily(kicks);
   liveKicks(kicks);
@@ -24,7 +26,6 @@ const undoKick = () => kicker(`undo`);
 
 function getKicks() {
   let kicks = localStorage.getItem(`kicks`);
-  document.querySelector(`#Backup`).value = kicks;
   return JSON.parse(kicks);
 }
 
@@ -34,7 +35,9 @@ function porter() {
     kicks = JSON.parse(kicks);
     return kicks;
   } catch (e) {
-    return getKicks();
+    let date = new Date();
+    let day = smoothDate(date);
+    return getKicks() || [[day, 0]];
   }
 }
 
@@ -42,7 +45,7 @@ function daily(kicks) {
   let dailyObj = {}, count;
   kicks.forEach(kick => {
     let date = new Date(kick[0]);
-    let day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    let day = smoothDate(date);
     count = dailyObj[day] + 1 || 1;
     dailyObj[day] = count;
   });
@@ -107,6 +110,7 @@ function dygPlot(kicks, div, g) {
 }
 
 function dygReady() {
+  if (typeof g2 !== 'undefined') zoom(86400);
   setTimeout(function () {
     window.dispatchEvent(new Event('resize'));
   }, 500);
@@ -184,9 +188,13 @@ const animate = function () {
 
 const zoom = function (res) {
   var w = g2.xAxisRange();
-  desired_range = [w[0], w[0] + res * 1000];
+  let ran = smoothDate(new Date(w[1])).getTime();
+  desired_range = [ran, ran + res * 1000];
   animate();
 };
+
+const smoothDate = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
 
 const pan = function (dir) {
   var w = g2.xAxisRange();
