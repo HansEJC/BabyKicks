@@ -2,6 +2,7 @@ function startup() {
   document.querySelector(`#addKick`).addEventListener(`click`, addKick);
   document.querySelector(`#undo`).addEventListener(`click`, undoKick);
   document.querySelector(`#Copy`).addEventListener(`click`, copy);
+  document.querySelector(`#Share`).addEventListener(`click`, share);
   kicker();
 }
 
@@ -218,9 +219,17 @@ function reset() {
 }
 
 function copy() {
-  let textarea = document.querySelector(`textarea`);
+  const textarea = document.querySelector(`textarea`);
   textarea.select();
   document.execCommand("copy");
 }
 
+async function share() {
+  const shareData = { text: document.querySelector(`textarea`).innerText };
+  try {
+    await navigator.share(shareData);
+  } catch (err) {
+    console.log(`Error: ${err}`);
+  }
+}
 startup();
