@@ -225,7 +225,7 @@ function copy() {
 }
 
 async function share() {
-  const shareData = { text: document.querySelector(`textarea`).innerText };
+  const shareData = { text: document.querySelector(`textarea`).value };
   try {
     await navigator.share(shareData);
   } catch (err) {
