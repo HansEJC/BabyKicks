@@ -43,15 +43,15 @@ function newRoute(inputs) {
     ? ({ request }) => request.destination === str
     : typ === `url`
       ? ({ url }) => url.pathname.endsWith(str)
-      : typ === `urlStart`
-        ? ({ url }) => url.pathname.startsWith(str)
+      : typ === `urlInc`
+        ? ({ url }) => url.pathname.includes(str)
         : ({ url }) => url.pathname.endsWith(str[0]) || url.pathname.endsWith(str[1])
   registerRoute(type, straTegy);
 }
 
 newRoute({ str: `image`, name: `images`, plugs: plugExp, strat: `cache`, typ: `request` });
 newRoute({ str: `style`, name: `css`, plugs: plugStand, strat: `net`, typ: `request` });
-newRoute({ str: `js/ext/`, name: `exScripts`, plugs: plugExp, strat: `cache`, typ: `urlStart` });
+newRoute({ str: `js/ext/`, name: `exScripts`, plugs: plugExp, strat: `cache`, typ: `urlInc` });
 newRoute({ str: `script`, name: `scripts`, plugs: plugStand, strat: `net`, typ: `request` });
 newRoute({ str: [`.html`, `.php`], name: `html`, plugs: plugStand, strat: `net`, typ: `url2` });
 newRoute({ str: `.csv`, name: `csv`, plugs: plugExp, strat: `cache`, typ: `url` });
