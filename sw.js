@@ -91,7 +91,7 @@ setDefaultHandler(
 setCatchHandler(async ({ event }) => {
   // Return the precached offline page if a document is being requested
   if (event.request.destination === 'document') {
-    return matchPrecache('/help.html');
+    return matchPrecache('/index.html');
   }
   return Response.error();
 });
