@@ -42,71 +42,6 @@
   }
 })();
 
-function toggleNav(e) {
-  const x = document.getElementById("myTopnav");
-  try {
-    if (e.target.parentElement.className === "topnav") {
-      x.className += " responsive";
-    } else {
-      x.className = "topnav";
-    }
-  } catch (err) { x.className = "topnav" }
-}
-document.addEventListener('click', toggleNav);
-
-function navBar() {
-  const navbar = document.querySelector('#myTopnav');
-  navbar.innerHTML = `
-      <a href="#" style="font-size:15px;" class="icon">&#9776;</a>
-      <div class="dropdown">
-        <a href='#' class="dropbtn heh">Games</a>
-        <div class="dropdown-content">
-          <a href='dobble.html'>Dobble</a>
-          <a href='memory.html'>Simon</a>
-          <a href='index.html'>TRex</a>
-          <a href='tictactoe.html'>TicTacToe</a>
-          <a href='mole.html'>Whack a Mole</a>
-        </div>
-      </div>
-      <div class="dropdown">
-        <a href='#' class="dropbtn heh">Tools</a>
-        <div class="dropdown-content">
-          <a href='circuit.html'>Circuit Simulator</a>
-          <a href='csv.html'>CSV Plotter</a>
-          <a href='earth.html'>Earthing Calculation Tools</a>
-          <a href='soil.html'>Earthing Surveys</a>
-          <a href='tools.html'>Electrical Engineering Tools</a>
-          <a href='emc.html'>EMC Calculations</a>
-          <a href='mortgage.html'>Loan Calculator</a>
-        </div>
-      </div>
-      <div class="dropdown">
-        <a href='#' class="dropbtn heh">Railway</a>
-        <div class="dropdown-content">
-          <a href='relay.html'>Distance Protection Fault Plotter</a>
-          <a href='fault.html'>Railway Faults</a>
-          <a href='railvolts.html'>Railway Voltages</a>
-        </div>
-      </div>
-      <a href='op.html'>Orion Park</a>
-      <a href='javascript:helpPage()'>Help</a>
-    `;
-  document.querySelectorAll('.heh').forEach(function (item) { return item.addEventListener('click', randomPage) });
-}
-
-//navBar();
-let test;
-const navs = ['Games', 'Tools', 'Railway'];
-const randomChild = function (len) { return Math.floor(Math.random() * len) };
-function randomPage(e) {
-  test = e;
-  if (navs.some(function (nav) { return e.target.innerHTML.includes(nav) })) {
-    let nodeLen = randomChild(e.target.parentElement.children[1].querySelectorAll('a').length)
-    e.target.parentElement.children[1].querySelectorAll('a')[nodeLen].click();
-  }
-  else return;
-}
-
 if ("serviceWorker" in navigator) {
   //Adds manifest and stuff
   let head = document.head;
@@ -159,47 +94,17 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-//function to resize plot and copy to clipboard
-function clippy(x, y) {
-  let offset = document.querySelector('#graphdiv3').offsetTop;
-  document.querySelector('#graphdiv3').setAttribute(`style`, `height:${y}px !important; width:${x}px !important; max-height:${y}px; max-width:${x}px;`);
-  window.dispatchEvent(new Event('resize'));
-  for (var j = 0; j < 3; j++) {  //weird way to make it actually work
-    html2canvas(document.querySelector("#graphdiv3"), {
-      y: offset,
-      //scrollY: -window.scrollY,
-      scrollX: 0,
-      scrollY: 0,
-      height: y + 10,
-      width: x + 10,
-    }).then(canvas => {
-      if (typeof (navigator.clipboard) != 'undefined') {
-        canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]));
-      }
-      else {
-        document.querySelector("#graphdiv3").innerHTML = '';
-        document.querySelector("#graphdiv3").appendChild(canvas);
-      }
-    });
-  }
-  if (typeof (navigator.clipboard) == 'undefined') {
-    let htmltext = (navigator.userAgent.includes('Chrome') && !navigator.userAgent.includes("Edg")) ? "<br><br><a href=chrome://flags/#unsafely-treat-insecure-origin-as-secure>Auto copy to clipboard not supported in http. Copy this link and open in new tab to add this site as trusted to enable.</a>" : "<br><br><a>Auto copy to clipboard not supported. Right click plot and copy as image.</a>";
-    let article = document.querySelector('article');
-    if (article.lastChild.nodeName != "A") article.innerHTML += htmltext;
-  }
-}
-
 //get the saved value function - return the value of "v" from localStorage.
-function getSavedValue  (v){
+function getSavedValue(v) {
   if (!localStorage.getItem(v)) {
     return "";// You can change this to your defualt value.
   }
   return localStorage.getItem(v);
 }
 
-function saveCheckbox(e){
+function saveCheckbox(e) {
   e.checkbox = true;
-  document.querySelectorAll('input[type="checkbox"]').forEach(rad => localStorage.setItem(rad.id,rad.checked));
+  document.querySelectorAll('input[type="checkbox"]').forEach(rad => localStorage.setItem(rad.id, rad.checked));
 }
 
 const smoothdec = (a, b = 2) => +(parseFloat(a).toFixed(b)); //fix broken decimals
