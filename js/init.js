@@ -94,6 +94,29 @@ if ("serviceWorker" in navigator) {
   })
 }
 
+//Save the value function - save it to localStorage as (ID, VALUE)
+function saveValue(e){
+  var id = e.id;  // get the sender's id to save it .
+  var val = e.value; // get the value.
+  localStorage.setItem(id, val);// Every time user writing something, the localStorage's value will override .
+  saveParameter();
+}
+
+function saveParameter() {
+  let url ='';
+  let params = {};
+  document.querySelectorAll('input').forEach((el) => {
+    if (el.value.length > 0) params[el.id] = el.value;
+  });
+  let esc = encodeURIComponent;
+  let query = Object.keys(params)
+    .map(k => `${esc(k)}=${esc(params[k])}`)
+    .join('&');
+  url += `?${query}`;
+  let newurl = `${window.location.protocol}//${window.location.host+window.location.pathname+url}`;
+  window.history.pushState({ path: newurl }, '', newurl);  
+}
+
 //get the saved value function - return the value of "v" from localStorage.
 function getSavedValue(v) {
   if (!localStorage.getItem(v)) {

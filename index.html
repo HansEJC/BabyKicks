@@ -21,6 +21,8 @@
   <script defer src="js/init.js"></script>
   <link rel="stylesheet" href="css/dygraph.css" />
   <script defer src="js/ext/dygraph.min.js"></script>
+  <script src="js/ext/firebase-app.js"></script>
+  <script src="js/ext/firebase-database.js"></script>
   <script defer src="js/baby.js"></script>
 </head>
 
@@ -87,12 +89,26 @@
             </article>
           </div>
           <div class="row">
-            <form onsubmit="return false;">
-              <label for="Backup">Copy or paste kick data here</label>
-              <textarea class="texty" wrap="soft" id="Backup" onkeyup='saveValue(this); kicker(``,true);' /></textarea>
-              <button id="Copy" class="button">Copy</button>
-              <button id="Share" class="button">Share</button>
-            </form>
+            <section>
+              <form onsubmit="return false;">
+                <label for "userName">Database name</label>
+                <input type="text" name="fname" autocomplete="given-name" id="userName"
+                  onkeyup='saveValue(this);' placeholder="Name" />
+                  <button id="Export" class="button">Export</button>
+                  <button id="Import" class="button">Import</button>
+              </form>
+            </section>
+          </div>
+          <div class="row">
+            <section>
+              <form onsubmit="return false;">
+                <label for="Backup">Copy or paste kick data here</label>
+                <textarea class="texty" wrap="soft" id="Backup"
+                  onkeyup='saveTextArea(this); kicker(``,true);' /></textarea>
+                <button id="Copy" class="button">Copy</button>
+                <button id="Share" class="button">Share</button>
+              </form>
+            </section>
           </div>
         </div>
       </div>

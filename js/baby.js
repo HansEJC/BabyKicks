@@ -1,8 +1,12 @@
 function startup() {
+  document.querySelectorAll('input[type=text]').forEach(inp => inp.value = getSavedValue(inp.id));
   document.querySelector(`#addKick`).addEventListener(`click`, addKick);
   document.querySelector(`#undo`).addEventListener(`click`, undoKick);
   document.querySelector(`#Copy`).addEventListener(`click`, copy);
   document.querySelector(`#Share`).addEventListener(`click`, share);
+  document.querySelector(`#Export`).addEventListener(`click`, sendData);
+  document.querySelector(`#Import`).addEventListener(`click`, getData);
+  fireBase();
   kicker();
 }
 
@@ -33,6 +37,7 @@ function getKicks() {
 function porter() {
   let kicks = localStorage.getItem(`kicksimport`);
   try {
+    if (kicks.includes(`null`)) throw `null in database`;
     kicks = JSON.parse(kicks);
     return kicks;
   } catch (e) {
@@ -81,7 +86,7 @@ function pattern(kicks) {
 
 function dygPlot(kicks, div, g) {
   if (kicks.length < 1) return;
-  Dygraph.defaultInteractionModel.touchend = Dygraph.defaultInteractionModel.touchmove = Dygraph.defaultInteractionModel.touchstart = function() {};
+  Dygraph.defaultInteractionModel.touchend = Dygraph.defaultInteractionModel.touchmove = Dygraph.defaultInteractionModel.touchstart = function () { };
   window[g] = new Dygraph(
     document.getElementById(div),
     kicks,
@@ -119,7 +124,7 @@ function dygReady() {
 }
 
 //Save the value function - save it to localStorage as (ID, VALUE)
-function saveValue(e) {
+function saveTextArea(e) {
   var val = e.value; // get the value.
   localStorage.setItem(`kicksimport`, val);
 }
@@ -229,5 +234,38 @@ async function share() {
   } catch (err) {
     console.log(`Error: ${err}`);
   }
+}
+
+//Firebase
+
+function fireBase() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyCWxDunokGSB_bw0-jnq2rrEHGqlz79aj0",
+    authDomain: "baby-kicks-8012b.firebaseapp.com",
+    projectId: "baby-kicks-8012b",
+    storageBucket: "baby-kicks-8012b.appspot.com",
+    messagingSenderId: "899065769282",
+    appId: "1:899065769282:web:4fbf6bc264b93f8e846cdb",
+    measurementId: "G-M3B1WLBLVT"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+};
+
+function getData() {
+  let dbName = document.querySelector(`#userName`).value;
+  let dbObj = firebase.database().ref().child(dbName);
+  dbObj.on(`value`, snap => {
+    let data = JSON.stringify(snap.val());
+    localStorage.setItem(`kicksimport`, data);
+    document.querySelector(`#Backup`).value = data;
+    kicker(``,true);
+  });
+}
+
+function sendData() {
+  let dbName = document.querySelector(`#userName`).value;
+  let dbObj = firebase.database().ref().child(dbName);
+  dbObj.set(getKicks());
 }
 startup();
