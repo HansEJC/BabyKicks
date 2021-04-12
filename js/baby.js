@@ -8,10 +8,9 @@ function startup() {
 
 function kicker(func, port) {
   let date = new Date();
-  let day = smoothDate(date);
   let kicks = port
     ? porter()
-    : getKicks() || [[day, 0]];
+    : getKicks() || [];
   try {
     if (func === `add`) kicks.push([date, 1]);
     else if (func === `undo`) kicks.pop();
@@ -37,9 +36,7 @@ function porter() {
     kicks = JSON.parse(kicks);
     return kicks;
   } catch (e) {
-    let date = new Date();
-    let day = smoothDate(date);
-    return getKicks() || [[day, 0]];
+    return getKicks() || [];
   }
 }
 
