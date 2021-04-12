@@ -51,7 +51,7 @@ function newRoute(inputs) {
 
 newRoute({ str: `image`, name: `images`, plugs: plugExp, strat: `cache`, typ: `request` });
 newRoute({ str: `style`, name: `css`, plugs: plugStand, strat: `net`, typ: `request` });
-newRoute({ str: `/js/ext/`, name: `exScripts`, plugs: plugExp, strat: `cache`, typ: `urlStart` });
+newRoute({ str: `js/ext/`, name: `exScripts`, plugs: plugExp, strat: `cache`, typ: `urlStart` });
 newRoute({ str: `script`, name: `scripts`, plugs: plugStand, strat: `net`, typ: `request` });
 newRoute({ str: [`.html`, `.php`], name: `html`, plugs: plugStand, strat: `net`, typ: `url2` });
 newRoute({ str: `.csv`, name: `csv`, plugs: plugExp, strat: `cache`, typ: `url` });
