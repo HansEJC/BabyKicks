@@ -8,7 +8,7 @@ const { ExpirationPlugin } = workbox.expiration;
 //const googleAnalytics = workbox.googleAnalytics;
 //googleAnalytics.initialize(); //"Uses too much storage, not worth it.
 
-async function cacheKeyWillBeUsed({ request, mode }) {
+async function cacheKeyWillBeUsed({ request }) {
   const url = new URL(request.url);
   return url.origin + url.pathname;
   // Any search params or hash will be left out.
@@ -43,9 +43,7 @@ function newRoute(inputs) {
     ? ({ request }) => request.destination === str
     : typ === `url`
       ? ({ url }) => url.pathname.endsWith(str)
-      : typ === `urlInc`
-        ? ({ url }) => url.pathname.includes(str)
-        : ({ url }) => url.pathname.endsWith(str[0]) || url.pathname.endsWith(str[1])
+      : ({ url }) => url.pathname.includes(str);
   registerRoute(type, straTegy);
 }
 
@@ -54,7 +52,6 @@ newRoute({ str: `style`, name: `css`, plugs: plugStand, strat: `net`, typ: `requ
 newRoute({ str: `document`, name: `html`, plugs: plugStand, strat: `net`, typ: `request` });
 newRoute({ str: `js/ext/`, name: `exScripts`, plugs: plugExp, strat: `cache`, typ: `urlInc` });
 newRoute({ str: `script`, name: `scripts`, plugs: plugStand, strat: `net`, typ: `request` });
-newRoute({ str: [`.html`, `.php`], name: `html`, plugs: plugStand, strat: `net`, typ: `url2` });
 newRoute({ str: `.csv`, name: `csv`, plugs: plugExp, strat: `cache`, typ: `url` });
 newRoute({ str: `.json`, name: `json`, plugs: plugStand, strat: `net`, typ: `url` });
 /*
