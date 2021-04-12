@@ -1,6 +1,7 @@
 function startup() {
   document.querySelector(`#addKick`).addEventListener(`click`, addKick);
   document.querySelector(`#undo`).addEventListener(`click`, undoKick);
+  document.querySelector(`#Copy`).addEventListener(`click`, copy);
   kicker();
 }
 
@@ -110,7 +111,9 @@ function dygPlot(kicks, div, g) {
 }
 
 function dygReady() {
-  if (typeof g2 !== 'undefined') zoom(86400);
+  try {
+    if (typeof g2 !== 'undefined') zoom(86400);
+  } catch (e) { console.log(`Not enough data: ${e}`); }
   setTimeout(function () {
     window.dispatchEvent(new Event('resize'));
   }, 500);
@@ -168,18 +171,21 @@ var desired_range = null;
 function approach_range() {
   if (!desired_range) return;
   // go halfway there
-  var range = g2.xAxisRange();
-  if (Math.abs(desired_range[0] - range[0]) < 60 &&
-    Math.abs(desired_range[1] - range[1]) < 60) {
-    g2.updateOptions({ dateWindow: desired_range });
-    // (do not set another timeout.)
-  } else {
-    var new_range;
-    new_range = [0.5 * (desired_range[0] + range[0]),
-    0.5 * (desired_range[1] + range[1])];
-    g2.updateOptions({ dateWindow: new_range });
-    animate();
-  }
+
+  try {
+    var range = g2.xAxisRange();
+    if (Math.abs(desired_range[0] - range[0]) < 60 &&
+      Math.abs(desired_range[1] - range[1]) < 60) {
+      g2.updateOptions({ dateWindow: desired_range });
+      // (do not set another timeout.)
+    } else {
+      var new_range;
+      new_range = [0.5 * (desired_range[0] + range[0]),
+      0.5 * (desired_range[1] + range[1])];
+      g2.updateOptions({ dateWindow: new_range });
+      animate();
+    }
+  } catch (e) { console.log(`Not enough data: ${e}`); }
 }
 
 const animate = function () {
@@ -209,6 +215,12 @@ function reset() {
     dateWindow: null,
     valueRange: null
   });
+}
+
+function copy() {
+  let textarea = document.querySelector(`textarea`);
+  textarea.select();
+  document.execCommand("copy");
 }
 
 startup();

@@ -87,9 +87,10 @@
             </article>
           </div>
           <div class="row">
-            <form>
+            <form onsubmit="return false;">
               <label for="Backup">Copy or paste kick data here</label>
-              <textarea class="texty" wrap="soft" id="Backup" onkeyup='saveValue(this); kicker(``,true);' />
+              <textarea class="texty" wrap="soft" id="Backup" onkeyup='saveValue(this); kicker(``,true);' /></textarea>
+              <button id="Copy" class="button">Copy</button>
             </form>
           </div>
         </div>
