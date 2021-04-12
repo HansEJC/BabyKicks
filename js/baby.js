@@ -84,6 +84,7 @@ function pattern(kicks) {
 
 function dygPlot(kicks, div, g) {
   if (kicks.length < 1) return;
+  Dygraph.defaultInteractionModel.touchend = Dygraph.defaultInteractionModel.touchmove = Dygraph.defaultInteractionModel.touchstart = function() {};
   window[g] = new Dygraph(
     document.getElementById(div),
     kicks,
