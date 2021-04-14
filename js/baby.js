@@ -3,23 +3,18 @@ function startup() {
   document.querySelector(`#addKick`).addEventListener(`click`, addKick);
   document.querySelector(`#undo`).addEventListener(`click`, undoKick);
   document.querySelector(`#Share`).addEventListener(`click`, share);
-  document.querySelector(`#Export`).addEventListener(`click`, sendData);
-  document.querySelector(`#Import`).addEventListener(`click`, getData);
-  let user = document.querySelector(`#userName`);
+  const user = document.querySelector(`#userName`);
   fireBase();
   kicker();
-  if (document.URL.includes(`dbShare`)) {
-    getData();
-    user.value =``;
-    saveValue(user);
+  if (user.value.length > 25 && !user.value.includes(`@`)) {
+    getData(user.value);
   }
+  fireAuth();
 }
 
-function kicker(func, port) {
+function kicker(func) {
   let date = new Date();
-  let kicks = port
-    ? porter()
-    : getKicks() || [];
+  let kicks = getKicks() || [];
   try {
     if (func === `add`) kicks.push([date, 1]);
     else if (func === `undo`) kicks.pop();
@@ -28,6 +23,7 @@ function kicker(func, port) {
   daily(kicks);
   liveKicks(kicks);
   pattern(kicks);
+  if (firebase.auth().currentUser) sendData();
 }
 
 const addKick = () => kicker(`add`);
@@ -36,17 +32,6 @@ const undoKick = () => kicker(`undo`);
 function getKicks() {
   let kicks = localStorage.getItem(`kicks`);
   return JSON.parse(kicks);
-}
-
-function porter() {
-  let kicks = localStorage.getItem(`kicksimport`);
-  try {
-    if (kicks.includes(`null`)) throw `null in database`;
-    kicks = JSON.parse(kicks);
-    return kicks;
-  } catch (e) {
-    return getKicks() || [];
-  }
 }
 
 function daily(kicks) {
@@ -203,7 +188,6 @@ const zoom = function (res) {
 
 const smoothDate = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-
 const pan = function (dir) {
   var w = g2.xAxisRange();
   var scale = w[1] - w[0];
@@ -220,14 +204,14 @@ function reset() {
 }
 
 async function share() {
-  let dbName = `${document.querySelector(`#userName`).value}dbShare`;
+  let dbName = firebase.auth().currentUser.uid;
   let link = `${window.location.protocol}//${window.location.host + window.location.pathname}?userName=${dbName}`;
   const shareData = {
     title: `BabyKicks`,
     text: `Check out the baby's routine!`,
     url: link
   };
-  sendData(dbName);
+  sendData();
   try {
     await navigator.share(shareData);
   } catch (err) {
@@ -236,7 +220,6 @@ async function share() {
 }
 
 //Firebase
-
 function fireBase() {
   const firebaseConfig = {
     apiKey: "AIzaSyCWxDunokGSB_bw0-jnq2rrEHGqlz79aj0",
@@ -251,18 +234,74 @@ function fireBase() {
   firebase.initializeApp(firebaseConfig);
 };
 
-function getData() {
-  let dbName = document.querySelector(`#userName`).value;
+function getData(dbName) {
   let dbObj = firebase.database().ref().child(dbName);
   dbObj.on(`value`, snap => {
     let data = JSON.stringify(snap.val());
-    localStorage.setItem(`kicksimport`, data);
-    kicker(``, true);
+    localStorage.setItem(`kicks`, data);
+    kicker();
   });
 }
 
-function sendData(dbName = document.querySelector(`#userName`).value) {
+function sendData() {
+  dbName = firebase.auth().currentUser.uid;
   let dbObj = firebase.database().ref().child(dbName);
   dbObj.set(getKicks());
+}
+
+function fireAuth() {
+  document.querySelector(`#Logout`).addEventListener(`click`, () => firebase.auth().signOut());
+  document.querySelector(`#Login`).addEventListener(`click`, doLogin);
+  firebase.auth().onAuthStateChanged(loginState);
+}
+
+function resetPass() {
+  const auth = firebase.auth();
+  const user = document.querySelector(`#userName`).value;
+  auth.sendPasswordResetEmail(user).then(() => {
+    document.querySelector(`#logInfo`).innerHTML = `Email sent`;
+    fader();
+  }).catch(e => {
+    document.querySelector(`#logInfo`).innerHTML = e;
+    fader();
+  });
+}
+
+function loginState(user) {
+  const logout = document.querySelector(`#Logout`);
+  const login = document.querySelector(`#Login`);
+  const form = document.querySelector(`#CloudForm`);
+  if (user) {
+    login.style = `display: none`;
+    logout.style = `display: block`;
+    form.style = `visibility: hidden`;
+    getData(firebase.auth().currentUser.uid);
+  }
+  else {
+    login.style = `display: block`;
+    logout.style = `display: none`;
+    form.style = `visibility: visible`;
+  }
+}
+
+function doLogin() {
+  const auth = firebase.auth();
+  const user = document.querySelector(`#userName`).value;
+  const pass = document.querySelector(`input[type=password]`).value;
+  const promise = auth.signInWithEmailAndPassword(user, pass);
+  promise.catch(e => {
+    document.querySelector(`#logInfo`).innerHTML = e;
+    fader();
+    auth.createUserWithEmailAndPassword(user, pass);
+  });
+
+}
+
+function fader() {
+  _(`#logInfo`).fade(`in`, 200);
+  setTimeout(function () {
+    _(`#logInfo`).fade(`out`, 500);
+    return false;
+  }, 3000);
 }
 startup();
