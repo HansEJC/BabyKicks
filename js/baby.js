@@ -2,12 +2,17 @@ function startup() {
   document.querySelectorAll('input[type=text]').forEach(inp => inp.value = getSavedValue(inp.id));
   document.querySelector(`#addKick`).addEventListener(`click`, addKick);
   document.querySelector(`#undo`).addEventListener(`click`, undoKick);
-  document.querySelector(`#Copy`).addEventListener(`click`, copy);
   document.querySelector(`#Share`).addEventListener(`click`, share);
   document.querySelector(`#Export`).addEventListener(`click`, sendData);
   document.querySelector(`#Import`).addEventListener(`click`, getData);
+  let user = document.querySelector(`#userName`);
   fireBase();
   kicker();
+  if (document.URL.includes(`dbShare`)) {
+    getData();
+    user.value =``;
+    saveValue(user);
+  }
 }
 
 function kicker(func, port) {
@@ -19,7 +24,6 @@ function kicker(func, port) {
     if (func === `add`) kicks.push([date, 1]);
     else if (func === `undo`) kicks.pop();
   } catch (e) { console.log(e); }
-  document.querySelector(`#Backup`).value = JSON.stringify(kicks);
   localStorage.setItem(`kicks`, JSON.stringify(kicks));
   daily(kicks);
   liveKicks(kicks);
@@ -123,12 +127,6 @@ function dygReady() {
   }, 500);
 }
 
-//Save the value function - save it to localStorage as (ID, VALUE)
-function saveTextArea(e) {
-  var val = e.value; // get the value.
-  localStorage.setItem(`kicksimport`, val);
-}
-
 // This function draws bars for a single series. See
 // multiColumnBarPlotter below for a plotter which can draw multi-series
 // bar charts.
@@ -221,14 +219,15 @@ function reset() {
   });
 }
 
-function copy() {
-  const textarea = document.querySelector(`textarea`);
-  textarea.select();
-  document.execCommand("copy");
-}
-
 async function share() {
-  const shareData = { text: document.querySelector(`textarea`).value };
+  let dbName = `${document.querySelector(`#userName`).value}dbShare`;
+  let link = `${window.location.protocol}//${window.location.host + window.location.pathname}?userName=${dbName}`;
+  const shareData = {
+    title: `BabyKicks`,
+    text: `Check out the baby's routine!`,
+    url: link
+  };
+  sendData(dbName);
   try {
     await navigator.share(shareData);
   } catch (err) {
@@ -258,13 +257,11 @@ function getData() {
   dbObj.on(`value`, snap => {
     let data = JSON.stringify(snap.val());
     localStorage.setItem(`kicksimport`, data);
-    document.querySelector(`#Backup`).value = data;
-    kicker(``,true);
+    kicker(``, true);
   });
 }
 
-function sendData() {
-  let dbName = document.querySelector(`#userName`).value;
+function sendData(dbName = document.querySelector(`#userName`).value) {
   let dbObj = firebase.database().ref().child(dbName);
   dbObj.set(getKicks());
 }

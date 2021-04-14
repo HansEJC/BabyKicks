@@ -94,18 +94,14 @@
                 <label for "userName">Database name</label>
                 <input type="text" name="fname" autocomplete="given-name" id="userName"
                   onkeyup='saveValue(this);' placeholder="Name" />
-                  <button id="Export" class="button">Export</button>
-                  <button id="Import" class="button">Import</button>
               </form>
             </section>
           </div>
           <div class="row">
             <section>
               <form onsubmit="return false;">
-                <label for="Backup">Copy or paste kick data here</label>
-                <textarea class="texty" wrap="soft" id="Backup"
-                  onkeyup='saveTextArea(this); kicker(``,true);' /></textarea>
-                <button id="Copy" class="button">Copy</button>
+                <button id="Export" class="button">Export</button>
+                <button id="Import" class="button">Import</button>
                 <button id="Share" class="button">Share</button>
               </form>
             </section>
