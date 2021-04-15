@@ -28,7 +28,13 @@ function kicker(func) {
 }
 
 const addKick = () => kicker(`add`);
-const undoKick = () => kicker(`undo`);
+const undoKick = (e) => {
+  kicker(`undo`);
+  e.target.style = "display:none";
+  setTimeout(function () {
+    e.target.style = "display:block";
+  }, 1000);
+};
 
 function getKicks() {
   let kicks = localStorage.getItem(`kicks`);
