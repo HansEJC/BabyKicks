@@ -272,15 +272,18 @@ function loginState(user) {
   const logout = document.querySelector(`#Logout`);
   const login = document.querySelector(`#Login`);
   const form = document.querySelector(`#CloudForm`);
+  const share = document.querySelector(`#Share`);
   if (user) {
     login.style = `display: none`;
     logout.style = `display: block`;
+    share.style = `display: block`;
     form.style = `visibility: hidden`;
     getData(firebase.auth().currentUser.uid);
   }
   else {
     login.style = `display: block`;
     logout.style = `display: none`;
+    share.style = `display: none`;
     form.style = `visibility: visible`;
   }
 }
