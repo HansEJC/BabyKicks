@@ -3,7 +3,8 @@ function startup() {
   document.querySelector(`#addKick`).addEventListener(`click`, addKick);
   document.querySelector(`#undo`).addEventListener(`click`, undoKick);
   document.querySelector(`#Share`).addEventListener(`click`, share);
-  const user = document.querySelector(`#userName`);
+  document.querySelector(`#CloudForm`).addEventListener(`keydown`, enterLogin);
+  const user = document.querySelector(`#email`);
   fireBase();
   kicker();
   if (user.value.length > 25 && !user.value.includes(`@`)) {
@@ -205,7 +206,7 @@ function reset() {
 
 async function share() {
   let dbName = firebase.auth().currentUser.uid;
-  let link = `${window.location.protocol}//${window.location.host + window.location.pathname}?userName=${dbName}`;
+  let link = `${window.location.protocol}//${window.location.host + window.location.pathname}?email=${dbName}`;
   const shareData = {
     title: `BabyKicks`,
     text: `Check out the baby's routine!`,
@@ -257,7 +258,7 @@ function fireAuth() {
 
 function resetPass() {
   const auth = firebase.auth();
-  const user = document.querySelector(`#userName`).value;
+  const user = document.querySelector(`#email`).value;
   auth.sendPasswordResetEmail(user).then(() => {
     document.querySelector(`#logInfo`).innerHTML = `Email sent`;
     fader();
@@ -286,7 +287,7 @@ function loginState(user) {
 
 function doLogin() {
   const auth = firebase.auth();
-  const user = document.querySelector(`#userName`).value;
+  const user = document.querySelector(`#email`).value;
   const pass = document.querySelector(`input[type=password]`).value;
   const promise = auth.signInWithEmailAndPassword(user, pass);
   promise.catch(e => {
@@ -294,7 +295,17 @@ function doLogin() {
     fader();
     auth.createUserWithEmailAndPassword(user, pass);
   });
+}
 
+function enterLogin(e) {
+  var keyCode = e.which || e.keyCode;
+  var handled = false;
+  if (keyCode === 13) { //enter
+    e.preventDefault();
+    handled = true;
+    doLogin();
+  }
+  return !handled; //return false if the event was handled  
 }
 
 function fader() {
