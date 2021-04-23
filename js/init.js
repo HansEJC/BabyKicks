@@ -5,8 +5,8 @@
 //Toggle Dark Mode
 (function () {
   //Add toggle to page
-  const switchLabel = document.createElement('div');
-  const toggLabel = document.createElement('label');
+  const switchLabel = document.createElement('label');
+  const toggLabel = document.createElement('div');
   const checkBox = document.createElement('input');
   const spanny = document.createElement('span');
   switchLabel.classList.add('switch');

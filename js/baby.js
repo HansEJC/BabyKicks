@@ -24,6 +24,7 @@ function kicker(func) {
   daily(kicks);
   liveKicks(kicks);
   pattern(kicks);
+  averageTable(kicks);
   if (firebase.auth().currentUser) sendData();
 }
 
@@ -55,6 +56,9 @@ function daily(kicks) {
   let dailyKicks = Object.keys(dailyObj).map((key) => [new Date(key), dailyObj[key]]);
   dygPlot(dailyKicks, `graphdiv1`, `g1`);
   window[`days`] = dailyKicks.length;
+  let kickCount = dailyKicks.map(arr => arr[1]);
+  let kickAverage = Math.round(kickCount.reduce((acc, val) => (acc + val)) / dailyKicks.length);
+  localStorage.setItem(`kickAverage`, kickAverage);
 }
 
 function liveKicks(kicks) {
@@ -63,6 +67,16 @@ function liveKicks(kicks) {
   } catch (e) { }
   kicks = kicks.map(kick => [new Date(kick[0]), kick[1]]);
   dygPlot(kicks, `graphdiv2`, `g2`);
+  let kickTime = kicks.map(arr => arr[0]);
+  let averageTime = 0;
+  let length = kicks.length;
+  for (let i = 1; i < length; i++) {
+    let timeDiff = kickTime[i] - kickTime[i - 1];
+    if (timeDiff <= 1000 * 60 * 60 * 4) averageTime += timeDiff; //ignore if over 5 hours
+    else length--;
+  }
+  averageTime = averageTime / kicks.length;
+  localStorage.setItem(`averageTime`, timeString(averageTime));
 }
 
 function pattern(kicks) {
@@ -324,4 +338,29 @@ function fader() {
     return false;
   }, 3000);
 }
+
+function timeString(time) {
+  let sec = smoothdec(time / 1000, 0);
+  let min = smoothdec(sec / 60, 0);
+  let h = smoothdec(min / 60, 0);
+  let days = smoothdec(h / 24, 0);
+
+  let string = days >= 1 ? `${days} days ${h % 24} h ${min % 60} mins`
+    : h >= 1 ? ` ${h % 24} h ${min % 60} mins`
+      : min >= 1 ? `${min} mins`
+        : `${sec}s`;
+  return string;
+}
+
+function averageTable() {
+  const table = document.querySelector(`table`);
+  while (table.firstElementChild.childElementCount > 1) { //don't remove the firstborn children
+    table.firstElementChild.removeChild(table.firstElementChild.lastChild);
+  }
+  let row = table.insertRow(-1);
+  let kickAverage = getSavedValue(`kickAverage`);
+  row.insertCell(0).innerHTML = `${kickAverage} kicks`;
+  row.insertCell(1).innerHTML = getSavedValue(`averageTime`);
+}
+
 startup();

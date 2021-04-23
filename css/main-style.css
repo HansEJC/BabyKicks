@@ -103,6 +103,40 @@ p, ol, dl, table, blockquote, form
   margin-bottom: 2em;
 }
 
+/* Table */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 10pt;
+  width: 100px !important;
+  margin: 0 auto;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+tr {
+  width: 80%;
+}
+
+th {
+  border: 1px solid black;
+  text-align: left;
+  padding: 0 8px;
+  background-color: #444;
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+td {
+  border: 1px solid black;
+  text-align: left;
+  padding: 0 8px;
+  color: black;
+  white-space: nowrap;
+}
+
 /* Form */
 
 form {
