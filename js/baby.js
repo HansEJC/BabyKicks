@@ -21,6 +21,7 @@ function kicker(func) {
     else if (func === `undo`) kicks.pop();
   } catch (e) { console.log(e); }
   localStorage.setItem(`kicks`, JSON.stringify(kicks));
+  if (kicks.length < 1) return;
   daily(kicks);
   liveKicks(kicks);
   pattern(kicks);
@@ -68,15 +69,18 @@ function liveKicks(kicks) {
   kicks = kicks.map(kick => [new Date(kick[0]), kick[1]]);
   dygPlot(kicks, `graphdiv2`, `g2`);
   let kickTime = kicks.map(arr => arr[0]);
-  let averageTime = 0;
+  let totAv = 0, fiveAv = 0;
   let length = kicks.length;
-  for (let i = 1; i < length; i++) {
+  for (let i = 1; i < kicks.length; i++) {
     let timeDiff = kickTime[i] - kickTime[i - 1];
-    if (timeDiff <= 1000 * 60 * 60 * 4) averageTime += timeDiff; //ignore if over 5 hours
+    if (timeDiff <= 1000 * 60 * 60 * 4) fiveAv += timeDiff; //ignore if over 4 hours
     else length--;
+    totAv += timeDiff;
   }
-  averageTime = averageTime / kicks.length;
-  localStorage.setItem(`averageTime`, timeString(averageTime));
+  fiveAv = fiveAv / length;
+  totAv = totAv / kicks.length;
+  let averageTime = JSON.stringify({ totAv: timeString(totAv), fiveAv: timeString(fiveAv) });
+  localStorage.setItem(`averageTime`, averageTime);
 }
 
 function pattern(kicks) {
@@ -340,13 +344,13 @@ function fader() {
 }
 
 function timeString(time) {
-  let sec = smoothdec(time / 1000, 0);
-  let min = smoothdec(sec / 60, 0);
-  let h = smoothdec(min / 60, 0);
-  let days = smoothdec(h / 24, 0);
+  let sec = Math.floor(time / 1000);
+  let min = Math.floor(sec / 60);
+  let h = Math.floor(min / 60);
+  let days = Math.floor(h / 24);
 
   let string = days >= 1 ? `${days} days ${h % 24} h ${min % 60} mins`
-    : h >= 1 ? ` ${h % 24} h ${min % 60} mins`
+    : h >= 1 ? ` ${h} h ${min % 60} mins`
       : min >= 1 ? `${min} mins`
         : `${sec}s`;
   return string;
@@ -354,13 +358,15 @@ function timeString(time) {
 
 function averageTable() {
   const table = document.querySelector(`table`);
-  while (table.firstElementChild.childElementCount > 1) { //don't remove the firstborn children
+  while (table.firstElementChild.childElementCount > 2) { //don't remove the firstborn children
     table.firstElementChild.removeChild(table.firstElementChild.lastChild);
   }
   let row = table.insertRow(-1);
   let kickAverage = getSavedValue(`kickAverage`);
+  let { totAv, fiveAv } = JSON.parse(getSavedValue(`averageTime`));
   row.insertCell(0).innerHTML = `${kickAverage} kicks`;
-  row.insertCell(1).innerHTML = getSavedValue(`averageTime`);
+  row.insertCell(1).innerHTML = totAv;
+  row.insertCell(2).innerHTML = fiveAv;
 }
 
 startup();
