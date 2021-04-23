@@ -24,7 +24,7 @@ function kicker(func) {
   daily(kicks);
   liveKicks(kicks);
   pattern(kicks);
-  averageTable(kicks);
+  averageTable();
   if (firebase.auth().currentUser) sendData();
 }
 
