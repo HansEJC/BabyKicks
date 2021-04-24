@@ -14,10 +14,14 @@ function startup() {
 }
 
 function kicker(func) {
-  let date = new Date();
+  let datePick = document.querySelector(`#pastkick`);
+  let date = new Date(datePick.value || new Date());
   let kicks = getKicks() || [];
   try {
-    if (func === `add`) kicks.push([date, 1]);
+    if (func === `add`) {
+      kicks.push([date, 1]);
+      datePick.value = ``;
+    }
     else if (func === `undo`) kicks.pop();
   } catch (e) { console.log(e); }
   localStorage.setItem(`kicks`, JSON.stringify(kicks));
@@ -69,10 +73,11 @@ function liveKicks(kicks) {
   kicks = kicks.map(kick => [new Date(kick[0]), kick[1]]);
   dygPlot(kicks, `graphdiv2`, `g2`);
   let kickTime = kicks.map(arr => arr[0]);
+  kickTime.sort((a, b) => new Date(a) - new Date(b));
   let totAv = 0, fiveAv = 0;
   let length = kicks.length;
   for (let i = 1; i < kicks.length; i++) {
-    let timeDiff = kickTime[i] - kickTime[i - 1];
+    let timeDiff = Math.abs(kickTime[i] - kickTime[i - 1]);
     if (timeDiff <= 1000 * 60 * 60 * 4) fiveAv += timeDiff; //ignore if over 4 hours
     else length--;
     totAv += timeDiff;
@@ -103,12 +108,11 @@ function dygPlot(kicks, div, g) {
   Dygraph.defaultInteractionModel.touchend = Dygraph.defaultInteractionModel.touchmove = Dygraph.defaultInteractionModel.touchstart = function () { };
   window[g] = new Dygraph(
     document.getElementById(div),
-    kicks,
+    kicks.sort((a, b) => new Date(a) - new Date(b)),
     {
       xlabel: "Time",
       ylabel: "Kicks",
       labels: ['a', 'Kicks'],
-      connectSeparatedPoints: true,
       includeZero: true,
       plotter: barChartPlotter,
       axes: {
