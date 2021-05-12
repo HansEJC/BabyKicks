@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "dygraphs": "^2.1.0",
-    "workbox-sw": "^6.1.2",
-    "firebase": "^8.4.1"
+    "workbox-sw": "^6.1.5",
+    "firebase": "^8.6.0"
   },
   "repository": {
     "type": "git",
