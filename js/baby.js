@@ -31,6 +31,7 @@ function kicker(func) {
   pattern(kicks);
   averageTable();
   if (firebase.auth().currentUser) sendData();
+  gaData(func);
 }
 
 const addKick = () => kicker(`add`);
@@ -371,6 +372,15 @@ function averageTable() {
   row.insertCell(0).innerHTML = `${kickAverage} kicks`;
   row.insertCell(1).innerHTML = totAv;
   row.insertCell(2).innerHTML = fiveAv;
+}
+
+function gaData(func) {
+  try {
+    dataLayer.push({
+      'event': 'baby_kick',
+      type: func
+    });
+  } catch (err) { logError(err); }
 }
 
 startup();
