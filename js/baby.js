@@ -21,6 +21,7 @@ function kicker(func) {
     if (func === `add`) {
       kicks.push([date, 1]);
       datePick.value = ``;
+      gaData(func);
     }
     else if (func === `undo`) kicks.pop();
   } catch (e) { console.log(e); }
@@ -31,12 +32,12 @@ function kicker(func) {
   pattern(kicks);
   averageTable();
   if (firebase.auth().currentUser) sendData();
-  gaData(func);
 }
 
 const addKick = () => kicker(`add`);
 const undoKick = (e) => {
   kicker(`undo`);
+  gaData(`undo`);
   e.target.style = "display:none";
   setTimeout(function () {
     e.target.style = "display:block";
