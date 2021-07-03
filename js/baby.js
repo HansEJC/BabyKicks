@@ -101,7 +101,7 @@ function pattern(kicks) {
   try {
     g3.destroy();
   } catch (e) { }
-  let dailyKicks = Object.keys(dailyObj).map((key) => [+key, dailyObj[key] / days]);
+  let dailyKicks = Object.keys(dailyObj).map((key) => [Number(key), dailyObj[key] / days]);
   dygPlot(dailyKicks, `graphdiv3`, `g3`);
 }
 
