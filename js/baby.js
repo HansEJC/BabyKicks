@@ -24,7 +24,7 @@ function kicker(func) {
       gaData(func);
     }
     else if (func === `undo`) kicks.pop();
-  } catch (e) { console.log(e); }
+  } catch (e) {  }
   localStorage.setItem(`kicks`, JSON.stringify(kicks));
   if (kicks.length < 1) return;
   daily(kicks);
@@ -137,7 +137,7 @@ function dygPlot(kicks, div, g) {
 function dygReady() {
   try {
     if (typeof g2 !== 'undefined') zoom(86400);
-  } catch (e) { console.log(`Not enough data: ${e}`); }
+  } catch (e) {  }
   setTimeout(function () {
     window.dispatchEvent(new Event('resize'));
   }, 500);
@@ -203,7 +203,7 @@ function approach_range() {
       g2.updateOptions({ dateWindow: new_range });
       animate();
     }
-  } catch (e) { console.log(`Not enough data: ${e}`); }
+  } catch (e) {  }
 }
 
 const animate = function () {
@@ -246,7 +246,7 @@ async function share() {
   try {
     await navigator.share(shareData);
   } catch (err) {
-    console.log(`Error: ${err}`);
+    
   }
 }
 
